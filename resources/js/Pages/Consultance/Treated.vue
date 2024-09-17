@@ -1,10 +1,35 @@
 <script setup>
+import TablePagination from '@/Components/TablePagination.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, } from '@inertiajs/vue3';
+import { Head, Link, useForm, } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 defineProps({
     consultances: Object
 });
+
+const selectedId = ref(null);
+
+const consultance = (consultance) => {
+    selectedId.value = consultance;
+};
+const updateConsultance = (consultance) => {
+    // Assuming selectedContract contains the data of the user being updated
+    const form = useForm({});
+    form.put(route('consultance.approveTreatment', consultance), {
+        onSuccess: () => {
+            const closeButton = document.querySelector('.ti-btn[data-hs-overlay="#approveModel"]');
+            if (closeButton) {
+                closeButton.click();
+            }
+        },
+        onError: (errors) => {
+            console.log('error', errors);
+            // Handle error responses or validation errors
+        },
+    });
+};
+
 
 const options = {
     dom: '<"flex justify-between items-center mb-3"<"flex items-center"B><"flex items-center"f>>rt<"flex justify-between items-center mt-4"<"flex items-center"i><"flex items-center"p>>',
@@ -13,13 +38,14 @@ const options = {
             extend: 'excel',
             text: 'Export to Excel',
             exportOptions: {
-                columns: [0, 1, 2, 3, 4, 5, 6]
+                columns: [0, 1, 2, 3, 4]
             },
         }
     ],
     order: [],
 
 };
+
 </script>
 
 <template>
@@ -41,11 +67,16 @@ const options = {
                             <div class="box-title">
                                 List of Patients
                             </div>
+                            <Link :href="route('consultance.index')"
+                                class="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
+                            Back
+                            </Link>
 
                         </div>
                         <div class="box-body">
                             <div class="overflow-x-auto">
-                                <DataTable :options="options" class="table min-w-full whitespace-nowrap table-hover border table-bordered">
+                                <DataTable :options="options"
+                                    class="display table min-w-full whitespace-nowrap table-hover border table-bordered">
                                     <thead>
                                         <tr class="border border-inherit border-solid dark:border-defaultborder/10">
                                             <th scope="row" class="!ps-4 !pe-5">#</th>
@@ -54,10 +85,7 @@ const options = {
                                             <th scope="col" class="!text-start !text-[0.85rem]">Head of Family Number
                                             </th>
                                             <th scope="col" class="!text-start !text-[0.85rem]">Payment Status</th>
-                                            <th scope="col" class="!text-start !text-[0.85rem]">Department</th>
-                                            <th scope="col" class="!text-start !text-[0.85rem]">Status</th>
                                             <th scope="col" class="!text-start !text-[0.85rem]">Date & Time</th>
-                                            <!-- <th scope="col" class="!text-start !text-[0.85rem]">Action</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -77,25 +105,15 @@ const options = {
                                             <td>
                                                 <span v-if="item.payment_status == 'private'"
                                                     class="inline-flex text-warning !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-warning/10">{{
-                                                    item.payment_status.toUpperCase() }} </span>
+                                                        item.payment_status.toUpperCase() }} </span>
                                                 <span v-else
                                                     class="inline-flex text-info !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-info/10">{{
-                                                    item.payment_status.toUpperCase() }} </span>
-                                            </td>
-                                            <td>{{ item.department.toUpperCase() }}</td>
-                                            <td>
-                                                <span v-if="item.status == 'pending'"
-                                                    class="text-warning !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-warning/10">
-                                                    Not Treated </span>
-                                                <span v-else
-                                                    class="text-info !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-info/10">Treated
-                                                </span>
+                                                        item.payment_status.toUpperCase() }} </span>
                                             </td>
                                             <td>{{ item.created_at }}</td>
-
+                                            
                                         </tr>
                                     </tbody>
-
                                 </DataTable>
                             </div>
                         </div>
@@ -108,12 +126,12 @@ const options = {
 
         </div>
 
-        <div id="deleteModel" class="hs-overlay hidden ti-modal">
+        <div id="approveModel" class="hs-overlay hidden ti-modal">
             <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out min-h-[calc(100%-3.5rem)] flex items-center">
                 <div class="ti-modal-content w-full">
 
                     <div class="ti-modal-body text-center">
-                        <form @submit.prevent="destroyUser(selectedId)">
+                        <form @submit.prevent="updateConsultance(selectedId)">
                             <div class="text-center px-5 pb-0">
                                 <svg class="custom-alert-icon fill-warning inline-flex"
                                     xmlns="http://www.w3.org/2000/svg" height="5rem" viewBox="0 0 24 24" width="5rem"
@@ -122,17 +140,17 @@ const options = {
                                     <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z">
                                     </path>
                                 </svg>
-                                <h6 class="text-[1.85rem] !font-medium">Want to disable this card?</h6>
+                                <h6 class="text-[1.85rem] !font-medium">Are you sure to do this?</h6>
                                 <p class="text-muted">This alert is warn you that action cannot be
                                     undone.
                                 </p>
                                 <div class="mt-4">
-                                    <button type="button" data-hs-overlay="#deleteModel"
+                                    <button type="button" data-hs-overlay="#approveModel"
                                         class="ti-btn !py-2 !px-3 !text-[0.75rem] !font-medium ti-btn-outline-secondary m-1">Back</button>
 
                                     <button
                                         class="ti-btn !py-2 !px-3 !text-[0.75rem] !font-medium ti-btn-outline-warning m-1">Yes
-                                        Disable</button>
+                                        Continue</button>
                                 </div>
                             </div>
                         </form>
@@ -151,4 +169,3 @@ const options = {
 @import 'datatables.net-buttons-dt/css/buttons.dataTables.css';
 /* Add custom styles here if needed */
 </style>
-

@@ -1,7 +1,7 @@
 <script setup>
 import TablePagination from '@/Components/TablePagination.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm,} from '@inertiajs/vue3';
+import { Head, Link, useForm, } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps({
@@ -29,6 +29,23 @@ const updateConsultance = (consultance) => {
         },
     });
 };
+
+
+const options = {
+    dom: '<"flex justify-between items-center mb-3"<"flex items-center"B><"flex items-center"f>>rt<"flex justify-between items-center mt-4"<"flex items-center"i><"flex items-center"p>>',
+    buttons: [
+        {
+            extend: 'excel',
+            text: 'Export to Excel',
+            exportOptions: {
+                columns: [0, 1, 2, 3, 4]
+            },
+        }
+    ],
+    order: [],
+
+};
+
 </script>
 
 <template>
@@ -50,17 +67,23 @@ const updateConsultance = (consultance) => {
                             <div class="box-title">
                                 List of Patients
                             </div>
+                            <Link :href="route('consultance.treated')"
+                                class="ti-btn ti-btn-primary-full !py-1 !px-2 !text-[0.75rem]">
+                            All Treated
+                            </Link>
 
                         </div>
                         <div class="box-body">
                             <div class="overflow-x-auto">
-                                <table class="table min-w-full whitespace-nowrap table-hover border table-bordered">
+                                <DataTable :options="options"
+                                    class="display table min-w-full whitespace-nowrap table-hover border table-bordered">
                                     <thead>
                                         <tr class="border border-inherit border-solid dark:border-defaultborder/10">
                                             <th scope="row" class="!ps-4 !pe-5">#</th>
                                             <th scope="col" class="!text-start !text-[0.85rem] min-w-[200px]">Patient
                                             </th>
-                                            <th scope="col" class="!text-start !text-[0.85rem]">Head of Family Number</th>
+                                            <th scope="col" class="!text-start !text-[0.85rem]">Head of Family Number
+                                            </th>
                                             <th scope="col" class="!text-start !text-[0.85rem]">Payment Status</th>
                                             <th scope="col" class="!text-start !text-[0.85rem]">Date & Time</th>
                                             <th scope="col" class="!text-start !text-[0.85rem]">Action</th>
@@ -73,7 +96,8 @@ const updateConsultance = (consultance) => {
                                             <td>
                                                 <div class="flex items-center font-semibold">
                                                     <span class="!me-2 inline-flex justify-center items-center">
-                                                        <img :src="$page.props.asset_url + '/storage/' + item.image" alt="img"
+                                                        <img :src="$page.props.asset_url + '/storage/' + item.image"
+                                                            alt="img"
                                                             class="w-[1.75rem] h-[1.75rem] leading-[1.75rem] text-[0.65rem]  rounded-full">
                                                     </span>{{ item.first_name }} {{ item.last_name }}
                                                 </div>
@@ -81,21 +105,22 @@ const updateConsultance = (consultance) => {
                                             <td>{{ item.national_id }}</td>
                                             <td>
                                                 <span v-if="item.payment_status == 'private'"
-                                                    class="inline-flex text-warning !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-warning/10">{{ item.payment_status.toUpperCase() }} </span>
+                                                    class="inline-flex text-warning !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-warning/10">{{
+                                                        item.payment_status.toUpperCase() }} </span>
                                                 <span v-else
-                                                    class="inline-flex text-info !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-info/10">{{ item.payment_status.toUpperCase() }} </span>
+                                                    class="inline-flex text-info !py-[0.15rem] !px-[0.45rem] rounded-sm !font-semibold !text-[0.75em] bg-info/10">{{
+                                                        item.payment_status.toUpperCase() }} </span>
                                             </td>
                                             <td>{{ item.created_at }}</td>
                                             <td>
-                                                <button  @click="consultance(item.id)" aria-label="anchor"
+                                                <button @click="consultance(item.id)" aria-label="anchor"
                                                     data-hs-overlay="#approveModel"
                                                     class="ti-btn ti-btn-success-full !py-1 !px-2 !text-[0.75rem]">Treated</button>
                                             </td>
 
                                         </tr>
                                     </tbody>
-
-                                </table>
+                                </DataTable>
                             </div>
                         </div>
 
@@ -130,7 +155,8 @@ const updateConsultance = (consultance) => {
                                         class="ti-btn !py-2 !px-3 !text-[0.75rem] !font-medium ti-btn-outline-secondary m-1">Back</button>
 
                                     <button
-                                        class="ti-btn !py-2 !px-3 !text-[0.75rem] !font-medium ti-btn-outline-warning m-1">Yes Continue</button>
+                                        class="ti-btn !py-2 !px-3 !text-[0.75rem] !font-medium ti-btn-outline-warning m-1">Yes
+                                        Continue</button>
                                 </div>
                             </div>
                         </form>
@@ -144,3 +170,8 @@ const updateConsultance = (consultance) => {
 
     </AuthenticatedLayout>
 </template>
+<style>
+@import 'datatables.net-dt';
+@import 'datatables.net-buttons-dt/css/buttons.dataTables.css';
+/* Add custom styles here if needed */
+</style>
