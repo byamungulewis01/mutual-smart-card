@@ -13,8 +13,11 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);  //--> Create MFRC522 instance.
 
 #define ON_Board_LED 2  //--> Defining an On Board LED, used for indicators when the process of connecting to a wifi router
 
-const char* ssid = "BYAMUNGU";
-const char* password = "bmg123456";
+const char* ssid = "IMENATECH";
+const char* password = "imena@tech1";
+//const char* ssid = "BYAMUNGU";
+//const char* password = "bmg123456";
+
 
 ESP8266WebServer server(80);  //--> Server on port 80
 
@@ -68,7 +71,7 @@ void loop() {
     //Post Data
     postData = "UIDresult=" + UIDresultSend;
 
-    http.begin(wifiClient, "http://172.20.10.2/mutual-smart-card/api/get-cardnumber");  //Specify request destination
+    http.begin(wifiClient, "http://192.168.1.79/mutual-smart-card/api/get-cardnumber");  //Specify request destination
     http.addHeader("Content-Type", "application/x-www-form-urlencoded"); //Specify content-type header
 
     int httpCode = http.POST(postData);   //Send the request

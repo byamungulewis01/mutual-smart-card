@@ -1,20 +1,75 @@
 <?php
 
-use App\Models\User;
-use Inertia\Inertia;
-use App\Models\HospitalCard;
-use Illuminate\Support\Facades\Route;
-use App\Http\Resources\SearchResource;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ConsultanceController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\IremboController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FamilyHeaderController;
 use App\Http\Controllers\FamilyMemberController;
+use App\Http\Controllers\IremboController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchFamilyController;
 use App\Http\Controllers\SectorSettingsController;
+use App\Http\Controllers\UserController;
+use App\Http\Resources\SearchResource;
 use App\Models\Consultance;
+use App\Models\HospitalCard;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
+// Route::get('/test_sms', function () {
+
+//     $message = "Muraho neza? ";
+//     $data = array(
+
+//         "sender" => 'Nigoote ltd',
+
+//         "recipients" => "0727556378",
+//         "message" => $message,
+//     );
+
+//     $url = "https://www.intouchsms.co.rw/api/sendsms/.json";
+//     $data = http_build_query($data);
+//     $username = "nigoote.ltd";
+//     $password = "Enock@123";
+//     $ch = curl_init();
+//     curl_setopt($ch, CURLOPT_URL, $url);
+//     curl_setopt($ch, CURLOPT_USERPWD, $username . ":" . $password);
+//     curl_setopt($ch, CURLOPT_POST, true);
+//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+//     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+//     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+//     $result = curl_exec($ch);
+//     $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+//     curl_close($ch);
+//     echo $result;
+
+// });
+Route::get('/test_sms', function () {
+    $data=array(
+        "sender"=>'ISMS',
+        "recipients"=>"0727556378",
+        "message"=>"Test sms AP",
+      );
+
+$url="https://www.intouchsms.co.rw/api/sendsms/.json";
+$data=http_build_query($data);
+$username="menyatips";
+$password="Menyatips14";
+
+$ch=curl_init();
+curl_setopt($ch,CURLOPT_URL,$url);
+curl_setopt($ch,CURLOPT_USERPWD,$username.":".$password);
+curl_setopt($ch,CURLOPT_POST,true);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
+curl_setopt($ch,CURLOPT_POSTFIELDS,$data);
+$result=curl_exec($ch);
+$httpcode=curl_getinfo($ch,CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+echo $result;
+
+});
 
 Route::get('/', function () {
     return to_route('login');
@@ -26,7 +81,7 @@ Route::get('/dashboard', function () {
         'admissions' => Consultance::count(),
     ];
     $cards = HospitalCard::withTrashed()->orderByDesc('id')->limit(10)->get();
-    return Inertia::render('Dashboard', ['cards' => SearchResource::collection($cards),'numbers' => $numbers]);
+    return Inertia::render('Dashboard', ['cards' => SearchResource::collection($cards), 'numbers' => $numbers]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::prefix('sector')->name('sector.')->group(function () {
@@ -77,7 +132,6 @@ Route::middleware('auth')->group(function () {
     Route::controller(CardController::class)->prefix('cards')->name('cards.')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::delete('/{id}', 'destroy')->name('destroy');
-
     });
     Route::controller(ConsultanceController::class)->prefix('consultance')->name('consultance.')->group(function () {
         Route::get('/', 'index')->name('index');
