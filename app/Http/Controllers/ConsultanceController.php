@@ -14,6 +14,11 @@ class ConsultanceController extends Controller
         $consultances = ConsultanceResource::collection(Consultance::where('department', auth()->user()->department)->where('status', 'pending')->orderByDesc('id')->get());
         return Inertia::render('Consultance/Index', compact('consultances'));
     }
+    public function treated()
+    {
+        $consultances = ConsultanceResource::collection(Consultance::where('department', auth()->user()->department)->where('status', 'complete')->orderByDesc('id')->get());
+        return Inertia::render('Consultance/Treated', compact('consultances'));
+    }
     public function allAdmission()
     {
         $consultances = ConsultanceResource::collection(Consultance::orderByDesc('id')->get());

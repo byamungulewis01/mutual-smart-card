@@ -135,6 +135,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::controller(ConsultanceController::class)->prefix('consultance')->name('consultance.')->group(function () {
         Route::get('/', 'index')->name('index');
+        Route::get('/treated', 'treated')->name('treated');
         Route::put('/{id}', 'approveTreatment')->name('approveTreatment');
         Route::get('/all', 'allAdmission')->name('allAdmission');
     });

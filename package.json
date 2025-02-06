@@ -23,5 +23,15 @@
         "vite": "^5.0",
         "vue": "^3.4.0",
         "vue3-toastify": "^0.2.1"
+    },
+    "dependencies": {
+        "datatables.net-dt": "^2.1.6",
+        "datatables.net-vue3": "^3.0.2",
+        "datatables.net": "^2.0.8",
+        "datatables.net-buttons": "^3.0.2",
+        "datatables.net-buttons-dt": "^3.0.2",
+        "flowbite": "^2.3.0",
+        "jszip": "^3.10.1",
+        "pdfmake": "^0.2.10"
     }
 }
